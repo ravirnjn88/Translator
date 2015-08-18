@@ -8,14 +8,17 @@ from bs4 import BeautifulSoup
 lang_names = ["Arabic|ar","Bulgarian|bg","Catalan|ca","Chinese Simplified|zh-CHS","Chinese Traditional|zh-CHT","Czech|cs","Danish|da","Dutch|nl","English|en","Estonian|et","Finnish|fi","French|fr","German|de","Greek|el","Haitian Creole|ht","Hebrew|he","Hindi|hi","Hmong Daw|mww","Hungarian|hu","Indonesian|id","Italian|it","Japanese|ja","Klingon|tlh","Klingon (pIqaD)|tlh-Qaak","Korean|ko","Latvian|lv","Lithuanian|lt","Malay|ms","Maltese|mt","Norwegian|no","Persian|fa","Polish|pl","Portuguese|pt","Romanian|ro","Russian|ru","Slovak|sk","Slovenian|sl","Spanish|es","Swedish|sv","Thai|th","Turkish|tr","Ukrainian|uk","Urdu|ur","Vietnamese|vi","Welsh|cy"]
 
 sentence = "A dictionary’s keys are almost arbitrary values. Values that are not hashable, that is, values containing lists, dictionaries or other mutable types (that are compared by value rather than by object identity) may not be used as keys. Numeric types used for keys obey the normal rules for numeric comparison: if two numbers compare equal (such as 1 and 1.0) then they can be used interchangeably to index the same dictionary entry. (Note however, that since computers store floating-point numbers as approximations it is usually unwise to use them as dictionary keys."
-sentence2 = "I am heading to a restaurant to have lunch, afterwhich we are planning to catch up a movie"
+sentence2 = "I wanted to append value in list 'b' but the value of list 'a' have also changed.I think I have little idea why its like this (python passes lists by reference). "
 
 def get_header():
 	"""
 	Return the Header which is to be passes in each translate get requests
 	"""
-
-	post_req_para = {'client_id':'ravirnjn88', 'client_secret':'gDKLRV3lWnmP8EDsGvqoYSF1CCQvA2VRKYfyCjwGaNw=', 'scope':'http://api.microsofttranslator.com', 'grant_type':'client_credentials'}
+	fo = open("credential","r")
+	y = fo.read()
+	client_id = json.loads(y).get("client_id")
+	client_secret = json.loads(y).get("client_secret")
+	post_req_para = {'client_id':client_id, 'client_secret':client_secret, 'scope':'http://api.microsofttranslator.com', 'grant_type':'client_credentials'}
 	r = requests.post("https://datamarket.accesscontrol.windows.net/v2/OAuth2-13",data=post_req_para)
 	headers = {}
 	headers['Authorization'] = "Bearer %s" % (r.json()['access_token'])
@@ -30,7 +33,7 @@ def translate_text(text,from_lang,to_lang):
 	soup = BeautifulSoup(r.content)
 	return soup.find('string').string.encode('utf-8')
 
-#print translate_text(sentence2,'en','fr')
+#print translate_text(sentence2,'en','ur')
 
 def break_sentences(text,from_lang):
 	"""
@@ -62,8 +65,9 @@ def frndly_name_lang(lang):
 				friendly_name.append(elements2.split('|')[0])
 				break 
 	return friendly_name
-#ravi = ['en','fr','hi','nl','et']
-#print frndly_name_lang(ravi)
+
+#ra = ['en','fr','hi','nl','et']
+#print frndly_name_lang(ra)
 
 def detect_lang(text):
 	"""
@@ -75,6 +79,7 @@ def detect_lang(text):
 	return frndly_name_lang([soup.find('string').text])[0]
 
 #print detect_lang('مطعم لتناول')
+#print detect_lang('کاالحاق کرنا')
 
 def command_line():
 	def check_lang_in_list(lang):
@@ -88,7 +93,7 @@ def command_line():
 			print 'language not in list Terminating !!!!'
 
 	def comm_trans_text():
-		print "You have selected to translate a given text. Available Language for Translation are :"
+		print "You have selected to translate a given text. Available Languages for Translation are :"
 		print "English Name \t Language Code"
 		for elements in lang_names:
 			print "%s \t \t %s" %(elements.split('|')[0],elements.split('|')[1])
@@ -98,7 +103,7 @@ def command_line():
 		a = raw_input()
 		print "Enter the Language Code to which it is translated"
 		b = raw_input()
-		print "Your Translate text is %s" %(translate_text(z,a,b))
+		print "Your Translated text is %s" %(translate_text(z,a,b))
 
 	def comm_detect_lang():
 		print "You want to detect the language of the given text"
@@ -107,14 +112,14 @@ def command_line():
 		print "Given text is in %s" %(detect_lang(c))
 
 	def comm_count_letters():
-		print "Enter the text for letter calculation"
+		print "Enter the text for letters calculation"
 		d = raw_input()
 		print "What is the language code for this text"
 		e = raw_input()
 		f= break_sentences(d,e)
-		print "No of Sentence in the given text are %s and the letters in each word are %s" % (len(f), f)
+		print "Number of Sentences in the given text are %s and the letters in each sentence are %s" % (len(f), f)
 
-	print "Welcome to microsoft translator"
+	print "Welcome to Microsoft Translator"
 	print "Enter the Desired Option"
 	print "1. Translate text 	2. Detect Language 	3. Calculate Sentenses and and letters"
 	y = input()
@@ -127,5 +132,8 @@ def command_line():
 	if y!=1 and y!=2 and y!=3:
 		print "Wrong Input !!! Lets Start again"
 		command_line()
-command_line()
+
+# if run as stand alone script 
+if __name__ == "__main__":
+	command_line()
 
