@@ -1,0 +1,20 @@
+Command line tool for Language Translation Using Microsoft Translational Api.
+======================================================================================
+
+Function Supported:
+==================
+
+1) Detect Language.
+2) Translate a given Text to other language.
+3) Identify Number of Sentences and words in a Given paragraph.
+
+Dependencies:
+=============
+
+1. Python-requests
+2. BeautifulSoup
+
+Installation:
+============:
+1) Fill you your client id and client secret in the credential file.(https://msdn.microsoft.com/en-us/library/hh454950.aspx)
+2) Run the Script from Command line.
